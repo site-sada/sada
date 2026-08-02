@@ -1,0 +1,91 @@
+/* شريط تقدّم مبسّط لخطوات إنشاء الحساب (الحساب → التفعيل → اسم المستخدم
+   → تم) — نقاط بدل الدوائر المرقّمة عشان يكون أخف وأقل ازدحام. نفس
+   المكوّن يُستخدم بثلاث صفحات مختلفة، كل صفحة بس تحدد رقم خطوتها بـ
+   data-current-step. يشتغل مع assets/stepper.js. */
+
+/* حاوية بصرية (panel) حوالين الشريط — تجمعه بإطار واضح بدل ما يبان
+   عايم فوق الخلفية مباشرة. */
+.sada-stepper-panel{
+  width:100%;
+  max-width:380px;
+  margin:6px auto 22px;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:18px 16px;
+  box-sizing:border-box;
+}
+@media (max-width:480px){
+  .sada-stepper-panel{ border:none; padding:14px 4px; }
+}
+
+.sada-stepper{
+  width:100%;
+  max-width:300px;
+  margin:0 auto;
+  text-align:center;
+}
+
+/* تسمية الخطوة الحالية فقط — الخطوات الثانية موجودة بالـ DOM (عشان
+   الترجمة data-i18n تشتغل عليها بشكل طبيعي) بس مخفية، ونظهر وحدة بس
+   حسب data-current-step. */
+.sada-stepper-label{
+  display:none;
+  font-size:13.5px;
+  font-weight:700;
+  color:var(--ink);
+  margin:0 0 12px;
+}
+.sada-stepper-label.is-current{
+  display:block;
+  animation:sada-label-in .3s ease both;
+}
+@keyframes sada-label-in{
+  from{ opacity:0; transform:translateY(-3px); }
+  to{ opacity:1; transform:translateY(0); }
+}
+
+.sada-stepper-dots{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+
+.sada-dot{
+  width:7px;
+  height:7px;
+  border-radius:4px;
+  background:var(--line);
+  transition:width .3s cubic-bezier(.22,.61,.36,1), background-color .3s ease;
+}
+.sada-dot.is-complete{
+  background:#8b5cf6;
+}
+.sada-dot.is-current{
+  width:22px;
+  background:linear-gradient(90deg,#4f7cff,#8b5cf6);
+}
+
+/* لحظة "تقدّم حي" — لما نستدعي advanceTo() قبل التنقل لصفحة تالية
+   (مثلاً بعد نجاح كود التفعيل)، نبضة بسيطة على النقطة الجديدة عشان
+   يحس المستخدم بالتقدّم بشكل واضح قبل حتى ما تتغيّر الصفحة. */
+.sada-dot-just-advanced{
+  animation:sada-dot-pop .4s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes sada-dot-pop{
+  0%{ transform:scaleY(.4); }
+  55%{ transform:scaleY(1.6); }
+  100%{ transform:scaleY(1); }
+}
+
+@media (prefers-color-scheme: dark){
+  .sada-dot.is-complete{ background:#7c6bff; }
+  .sada-dot.is-current{ background:linear-gradient(90deg,#6ea8f5,#7c6bff); }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .sada-dot{ transition:none; }
+  .sada-stepper-label.is-current{ animation:none; }
+  .sada-dot-just-advanced{ animation:none; }
+}
