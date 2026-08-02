@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="preload" as="image" href="/assets/logo-black.png" fetchpriority="high">
+<meta name="theme-color" content="#0f0f0f">
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+<title data-i18n="signupPageTitle">إنشاء حساب — صدى</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0f0f0f; --ink-soft:#65676b; --ink-faint:#8a8d91; --line:#dbdbdb;
+  --bg:#fafafa; --panel:#ffffff; --accent:#1a73e8; --danger:#d93025; --success:#1e7a45;
+  --input-bg:#fafafa;
+  --btn-text:#ffffff;
+  --btn-bg:var(--ink);
+  --focus-border:var(--ink);
+  --msg-error-bg:#fdecea;
+  --msg-success-bg:#e9f7ef;
+  --card-shadow:none;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --ink:#f2f2f3; --ink-soft:#a9abaf; --ink-faint:#797c81; --line:#2a2b30;
+    --bg:#0a0a0c; --panel:#17181c; --accent:#6ea8f5; --danger:#f28b82; --success:#81c995;
+    --input-bg:#101114;
+    --btn-text:#ffffff;
+    --btn-bg:linear-gradient(135deg,#6ea8f5,#4b7fd1);
+    --focus-border:#6ea8f5;
+    --msg-error-bg:rgba(242,139,130,.14);
+    --msg-success-bg:rgba(129,201,149,.14);
+    --card-shadow:0 12px 34px rgba(0,0,0,.55);
+  }
+}
+*{box-sizing:border-box;} html,body{height:100%;margin:0;}
+body{ font-family:"IBM Plex Sans Arabic","Segoe UI",Tahoma,sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; display:flex; flex-direction:column; }
+a{color:var(--accent);text-decoration:none;} a:hover{text-decoration:underline;} button{font-family:inherit;}
+.topbar{ padding:22px 24px; display:flex; align-items:center; justify-content:space-between; }
+.topbar-spacer{ width:76px; }
+.logo{ display:flex; align-items:center; gap:10px; font-weight:700; font-size:19px; color:var(--ink); }
+.logo-mark{ height:29px; width:auto; display:block; flex-shrink:0; }
+.lang-switch{ display:flex; align-items:center; gap:6px; border:1px solid var(--line); background:transparent; color:var(--ink-soft); border-radius:20px; padding:7px 14px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; transition:border-color .15s ease, color .15s ease; }
+.lang-switch:hover{ border-color:var(--ink-faint); color:var(--ink); }
+.lang-switch svg{ width:15px; height:15px; }
+.wrap{ flex:1; display:flex; align-items:center; justify-content:center; padding:16px 16px 60px; }
+.card{ width:100%; max-width:380px; background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:36px 32px; box-shadow:var(--card-shadow); }
+.below-card{ width:100%; max-width:380px; text-align:center; margin-top:16px; border:1px solid var(--line); border-radius:12px; padding:16px; font-size:14px; }
+.below-card.switcher{ border:none; padding:0; }
+.above-card{ width:100%; max-width:380px; text-align:center; margin-bottom:20px; border:1px solid var(--line); border-radius:12px; padding:16px; font-size:14px; }
+.above-card.switcher{ border:none; padding:0; }
+.stack{ display:flex; flex-direction:column; align-items:center; }
+@media (max-width:480px){ .card{ border:none; padding:20px 6px; } .below-card{ border:none; } .above-card{ border:none; } }
+.card h1{ font-size:20px; font-weight:700; margin:0 0 6px; text-align:center; }
+.card .sub{ font-size:13.5px; color:var(--ink-soft); text-align:center; margin:0 0 26px; }
+.field{ margin-bottom:14px; }
+.field label{ display:block; font-size:13px; font-weight:500; color:var(--ink); margin-bottom:6px; }
+.field .input-shell{ border:1px solid var(--line); border-radius:8px; background:var(--input-bg); transition:border-color .15s ease, background .15s ease; position:relative; }
+.field .input-shell:focus-within{ border-color:var(--focus-border); background:var(--panel); }
+.pw-strength{ display:flex; align-items:center; gap:8px; margin-top:8px; height:0; opacity:0; overflow:hidden; transition:height .2s ease, opacity .2s ease; }
+.pw-strength.show{ height:16px; opacity:1; }
+.pw-strength-track{ flex:1; height:4px; border-radius:2px; background:var(--line); overflow:hidden; }
+.pw-strength-bar{ height:100%; width:0%; border-radius:2px; background:var(--danger); transition:width .3s ease, background-color .3s ease; }
+.pw-strength-label{ font-size:12px; font-weight:600; white-space:nowrap; color:var(--danger); transition:color .3s ease; }
+.pw-strength[data-level="weak"] .pw-strength-bar{ background:var(--danger); }
+.pw-strength[data-level="weak"] .pw-strength-label{ color:var(--danger); }
+.pw-strength[data-level="good"] .pw-strength-bar{ background:#e8890c; }
+.pw-strength[data-level="good"] .pw-strength-label{ color:#e8890c; }
+.pw-strength[data-level="strong"] .pw-strength-bar{ background:var(--success); }
+.pw-strength[data-level="strong"] .pw-strength-label{ color:var(--success); }
+.field .input-shell.field-error{ border-color:var(--danger); }
+.email-suggest{ display:none; align-items:center; gap:8px; flex-wrap:wrap; margin-top:8px; padding:9px 12px; border-radius:8px; background:var(--msg-success-bg); font-size:12.5px; line-height:1.7; color:var(--ink); }
+.email-suggest.show{ display:flex; }
+.email-suggest button{ border:none; background:none; cursor:pointer; font-family:inherit; font-size:12.5px; font-weight:700; padding:2px; color:var(--accent); }
+.email-suggest button.ghost{ color:var(--ink-soft); font-weight:600; }
+.field input{ width:100%; border:none; outline:none; background:transparent; padding:12px 14px; font-size:14.5px; font-family:inherit; color:var(--ink); border-radius:8px; }
+.field input::placeholder{ color:#a8abaf; }
+
+/* ===== منتقي تاريخ الميلاد الاحترافي (Wheel Picker) ===== */
+/* بديل عن input[type=date] الأصلي، اللي شكله يعتمد بالكامل على نظام
+   تشغيل/متصفح المستخدم. زر واحد يفتح نافذة فيها ثلاثة أعمدة تمرير
+   (يوم/شهر/سنة) بنفس أسلوب منتقي التاريخ بـ iOS — موحّد وثابت الشكل
+   بكل الأجهزة والمتصفحات. */
+.birthdate-shell{ display:flex; align-items:stretch; }
+.bd-trigger{
+  flex:1; display:flex; align-items:center; justify-content:space-between; gap:10px;
+  border:none; outline:none; background:transparent; cursor:pointer; text-align:start;
+  padding:12px 14px; font-size:14.5px; font-family:inherit; color:var(--ink); border-radius:8px;
+}
+.bd-trigger .bd-display{ color:#a8abaf; }
+.bd-trigger.has-value .bd-display{ color:var(--ink); direction:ltr; unicode-bidi:isolate; }
+.bd-trigger .bd-cal-icon{ flex-shrink:0; color:var(--ink-faint); }
+
+/* الطبقة الخلفية + النافذة نفسها */
+.bd-modal-overlay{
+  position:fixed; inset:0; height:100vh; height:100dvh; background:rgba(15,15,15,.45); display:flex; align-items:flex-end;
+  justify-content:center; z-index:200; opacity:0; visibility:hidden; transition:opacity .2s ease, visibility 0s linear .2s;
+  padding:0;
+}
+.bd-modal-overlay.show{ opacity:1; visibility:visible; transition:opacity .2s ease; }
+@media (min-width:560px){ .bd-modal-overlay{ align-items:center; padding:16px; } }
+.bd-modal{
+  width:100%; max-width:360px; background:var(--panel); border:1px solid var(--line);
+  border-radius:20px 20px 0 0; padding:20px 20px calc(20px + env(safe-area-inset-bottom));
+  margin-bottom:8px;
+  box-shadow:0 -8px 30px rgba(0,0,0,.12); transform:translateY(16px); transition:transform .25s cubic-bezier(.22,1,.36,1);
+}
+@media (min-width:560px){ .bd-modal{ border-radius:20px; box-shadow:0 20px 50px rgba(0,0,0,.2); transform:translateY(8px) scale(.98); } }
+.bd-modal-overlay.show .bd-modal{ transform:translateY(0) scale(1); }
+.bd-modal h2{ font-size:15.5px; font-weight:700; text-align:center; margin:0 0 16px; color:var(--ink); }
+
+/* الأعمدة الثلاثة */
+.bd-wheels{
+  position:relative; display:flex; flex-direction:row; height:200px;
+  -webkit-mask-image:linear-gradient(to bottom, transparent 0, #000 56px, #000 144px, transparent 200px);
+  mask-image:linear-gradient(to bottom, transparent 0, #000 56px, #000 144px, transparent 200px);
+}
+.bd-wheel-col{
+  flex:1; min-width:0; overflow-y:scroll; scroll-snap-type:y mandatory; scrollbar-width:none;
+  -ms-overflow-style:none; padding:80px 0;
+}
+.bd-wheel-col::-webkit-scrollbar{ display:none; }
+.bd-wheel-item{
+  height:40px; line-height:40px; text-align:center; scroll-snap-align:center; cursor:pointer;
+  font-size:15px; color:var(--ink-faint); font-variant-numeric:tabular-nums; user-select:none;
+  transition:color .15s ease, font-weight .15s ease;
+}
+.bd-wheel-item.selected{ color:var(--ink); font-weight:700; font-size:16px; }
+.bd-wheel-highlight{
+  position:absolute; left:0; right:0; top:80px; height:40px; pointer-events:none;
+  border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  background:color-mix(in srgb, var(--accent) 6%, transparent);
+}
+
+/* أزرار إلغاء/تم */
+.bd-modal-actions{ display:flex; gap:10px; margin-top:18px; }
+.bd-btn{ flex:1; border:none; border-radius:999px; padding:12px; font-weight:700; font-size:14px; font-family:inherit; cursor:pointer; transition:opacity .15s ease; }
+.bd-btn:hover{ opacity:.85; }
+.bd-btn-ghost{ background:var(--input-bg); color:var(--ink-soft); border:1px solid var(--line); }
+.bd-btn-primary{ background:var(--btn-bg); color:var(--btn-text); }
+@media (prefers-color-scheme: dark){
+  .bd-modal{ box-shadow:0 -8px 34px rgba(0,0,0,.5); }
+  @media (min-width:560px){ .bd-modal{ box-shadow:0 20px 60px rgba(0,0,0,.55); } }
+}
+.toggle-eye{ position:absolute; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:#8a8d91; padding:4px; display:flex; }
+html[dir="rtl"] .toggle-eye{ left:10px; right:auto; }
+html[dir="ltr"] .toggle-eye{ right:10px; left:auto; }
+html[dir="rtl"] #password{ padding-left:38px; }
+html[dir="ltr"] #password{ padding-right:38px; }
+.btn-primary{ width:100%; border:none; border-radius:8px; padding:12.5px; font-weight:700; font-size:14.5px; color:var(--btn-text); background:var(--btn-bg); cursor:pointer; transition:opacity .15s ease; margin-top:6px; }
+.btn-primary:hover{ opacity:.88; } .btn-primary[disabled]{ opacity:.5; cursor:default; } .btn-primary[disabled].is-success{ opacity:1; }
+.btn-primary{ display:flex; align-items:center; justify-content:center; gap:8px; }
+.spinner{
+  display:none; width:15px; height:15px; border-radius:50%;
+  border:2px solid color-mix(in srgb, var(--btn-text) 35%, transparent); border-top-color:var(--btn-text);
+  animation:spin .7s linear infinite;
+}
+.spinner.show{ display:inline-block; }
+@keyframes spin{ to{ transform:rotate(360deg); } }
+.btn-primary.is-success{ background:var(--success) !important; }
+.check-pop{
+  display:none; width:19px; height:19px; align-items:center; justify-content:center;
+}
+.check-pop.show{ display:inline-flex; }
+.check-pop svg{ width:19px; height:19px; }
+.check-pop circle{
+  stroke:#ffffff; stroke-width:2; fill:none;
+  stroke-dasharray:64; stroke-dashoffset:64;
+  animation:check-circle .35s ease-out forwards;
+}
+.check-pop path{
+  stroke:#ffffff; stroke-width:2.5; fill:none; stroke-linecap:round; stroke-linejoin:round;
+  stroke-dasharray:20; stroke-dashoffset:20;
+  animation:check-mark .25s ease-out .3s forwards;
+}
+@keyframes check-circle{ to{ stroke-dashoffset:0; } }
+@keyframes check-mark{ to{ stroke-dashoffset:0; } }
+.form-msg{ display:none; font-size:13px; padding:10px 12px; border-radius:8px; margin-bottom:16px; text-align:center; }
+.form-msg.show{ display:block; } .form-msg.error{ background:var(--msg-error-bg); color:var(--danger); } .form-msg.success{ background:var(--msg-success-bg); color:var(--success); }
+.form-msg.shake{ animation:sada-shake .35s ease; }
+@keyframes sada-shake{
+  10%,90%{ transform:translateX(-1px); }
+  20%,80%{ transform:translateX(2px); }
+  30%,50%,70%{ transform:translateX(-4px); }
+  40%,60%{ transform:translateX(4px); }
+}
+.captcha-wrap{ display:none; justify-content:center; width:100%; margin:4px 0 18px; animation:captchaIn .25s ease; }
+.captcha-wrap.show{ display:flex; }
+@keyframes captchaIn{ from{ opacity:0; transform:translateY(-6px); } to{ opacity:1; transform:translateY(0); } }
+footer{ text-align:center; padding:18px; font-size:12px; color:var(--ink-faint); }
+
+</style>
+<link rel="stylesheet" href="/assets/transitions.css?v=20260801i">
+<noscript><style>body.sada-pre{opacity:1 !important;}</style></noscript>
+<link rel="stylesheet" href="/assets/stepper.css?v=20260801i">
+<link rel="stylesheet" href="/assets/form-controls.css?v=20260801i">
+</head>
+<body>
+<script>document.body.classList.add('sada-pre');</script>
+  <div class="topbar">
+    <button class="topbar-back" id="backBtn" type="button" aria-label="رجوع" data-i18n-aria="backBtnLabel">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <a href="/" class="logo">
+      <span data-i18n="brand">صدى</span>
+      <img src="/assets/logo-black.png" alt="" class="logo-mark" width="30" height="29" loading="eager" fetchpriority="high" decoding="async">
+    </a>
+    <button class="lang-switch" id="langBtn" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 6 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-6-3.8-9s1.3-6.3 3.8-9z"/></svg>
+      <span id="langBtnLabel">EN</span>
+    </button>
+  </div>
+
+  <div class="wrap">
+    <div class="stack">
+      <div class="above-card switcher">
+        <div class="radio-inputs">
+          <label class="radio">
+            <input type="radio" name="auth" onclick="sadaNavigate('/login')">
+            <span class="radio-item" data-i18n="login">تسجيل الدخول</span>
+          </label>
+          <label class="radio">
+            <input type="radio" name="auth" checked>
+            <span class="radio-item" data-i18n="signup">إنشاء حساب</span>
+          </label>
+        </div>
+      </div>
+      <div class="sada-stepper-panel">
+        <div class="sada-stepper" data-current-step="1">
+          <span class="sada-stepper-label" data-step-label="1" data-i18n="stepAccount">الحساب</span>
+          <span class="sada-stepper-label" data-step-label="2" data-i18n="stepVerify">التفعيل</span>
+          <span class="sada-stepper-label" data-step-label="3" data-i18n="stepUsername">اسم المستخدم</span>
+          <span class="sada-stepper-label" data-step-label="4" data-i18n="stepDone">تم</span>
+          <div class="sada-stepper-dots">
+            <span class="sada-dot" data-step="1"></span>
+            <span class="sada-dot" data-step="2"></span>
+            <span class="sada-dot" data-step="3"></span>
+            <span class="sada-dot" data-step="4"></span>
+          </div>
+        </div>
+      </div>
+      <form class="card" id="signupForm" novalidate>
+        <h1 data-i18n="signupTitle">إنشاء حساب</h1>
+        <p class="sub" data-i18n="signupSub">املأ البيانات التالية لإنشاء حسابك</p>
+
+        <div class="form-msg" id="formMsg"></div>
+
+        <div class="field floating">
+          <div class="input-shell"><input id="name" name="name" type="text" placeholder=" "><label for="name" data-i18n="nameLabel">الاسم الكامل</label></div>
+        </div>
+        <div class="field floating">
+          <div class="input-shell"><input id="email" name="email" type="text" inputmode="email" autocomplete="email" placeholder=" "><label for="email" data-i18n="emailLabel">البريد الإلكتروني</label></div>
+          <div class="email-suggest" id="emailSuggest">
+            <span id="emailSuggestText"></span>
+            <button type="button" id="emailSuggestAccept"></button>
+            <button type="button" id="emailSuggestDismiss" class="ghost"></button>
+          </div>
+        </div>
+        <div class="field floating">
+          <div class="input-shell">
+            <input id="password" name="password" type="password" placeholder=" ">
+            <label for="password" data-i18n="passwordLabel">كلمة المرور</label>
+            <button type="button" class="toggle-eye" aria-label="إظهار كلمة المرور" onclick="togglePwd(this)">
+              <svg class="eye-closed" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a18.36 18.36 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 7 11 7a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              <svg class="eye-open" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="display:none"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <div class="pw-strength" id="pwStrength">
+            <div class="pw-strength-track"><div class="pw-strength-bar" id="pwStrengthBar"></div></div>
+            <span class="pw-strength-label" id="pwStrengthLabel"></span>
+          </div>
+        </div>
+        <div class="field floating">
+          <div class="input-shell">
+            <input id="confirm" name="confirm" type="password" placeholder=" ">
+            <label for="confirm" data-i18n="confirmPasswordLabel">تأكيد كلمة المرور</label>
+            <button type="button" class="toggle-eye" aria-label="إظهار كلمة المرور" onclick="togglePwd(this)">
+              <svg class="eye-closed" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a18.36 18.36 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 7 11 7a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              <svg class="eye-open" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="display:none"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="birthdateTrigger" data-i18n="birthdateLabel">تاريخ الميلاد</label>
+          <div class="input-shell birthdate-shell">
+            <button type="button" id="birthdateTrigger" class="bd-trigger" aria-haspopup="dialog" aria-expanded="false">
+              <span class="bd-display" id="birthdateDisplay" data-i18n="birthdatePlaceholder">يوم / شهر / سنة</span>
+              <svg class="bd-cal-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
+            </button>
+            <input type="hidden" id="birthdate" name="birthdate" autocomplete="bday">
+          </div>
+        </div>
+
+        <!-- نافذة اختيار تاريخ الميلاد (Wheel Picker) -->
+        <div class="bd-modal-overlay" id="bdModalOverlay">
+          <div class="bd-modal" role="dialog" aria-modal="true" aria-labelledby="bdModalTitle">
+            <h2 id="bdModalTitle" data-i18n="birthdateModalTitle">اختر تاريخ ميلادك</h2>
+            <div class="bd-wheels">
+              <div class="bd-wheel-col" id="bdWheelDay"></div>
+              <div class="bd-wheel-col" id="bdWheelMonth"></div>
+              <div class="bd-wheel-col" id="bdWheelYear"></div>
+              <div class="bd-wheel-highlight" aria-hidden="true"></div>
+            </div>
+            <div class="bd-modal-actions">
+              <button type="button" class="bd-btn bd-btn-ghost" id="bdCancelBtn" data-i18n="cancelBtn">إلغاء</button>
+              <button type="button" class="bd-btn bd-btn-primary" id="bdDoneBtn" data-i18n="doneBtn">تم</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- حاوية Cloudflare Turnstile: تظهر من أول ما الصفحة تفتح -->
+        <div class="captcha-wrap" id="turnstileContainer"></div>
+
+        <button class="btn-primary btn-glow" type="submit" id="submitBtn">
+          <span class="glow"></span><span class="glow-hover"></span>
+          <span class="stroke"></span><span class="stroke-hover"></span>
+          <span class="fill"></span>
+          <span class="btn-content"><span class="spinner" id="submitSpinner"></span><span class="check-pop" id="submitCheck"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M7 12.5l3 3 7-7"/></svg></span><span id="submitLabel" data-i18n="signupBtn">إنشاء الحساب</span></span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <footer>© صدى — جميع الحقوق محفوظة</footer>
+
+  <!-- Cloudflare Turnstile -->
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="/js/supabase-config.js"></script>
+  <script src="/js/supabase-client.js"></script>
+  <script>
+    window.addEventListener('pageshow', function(e){ if (e.persisted) { window.location.reload(); } });
+    function togglePwd(btn){
+      const input = btn.previousElementSibling;
+      const willShow = input.type === "password";
+      input.type = willShow ? "text" : "password";
+      btn.querySelector(".eye-closed").style.display = willShow ? "none" : "";
+      btn.querySelector(".eye-open").style.display = willShow ? "" : "none";
+      btn.setAttribute("aria-label", willShow ? "إخفاء كلمة المرور" : "إظهار كلمة المرور");
+    }
+
+    // المفتاح يُقرأ من js/supabase-config.js. التحقق الحقيقي من Turnstile
+    // يصير عند Supabase (Authentication → Attack Protection) بمفتاحه السري.
+    const TURNSTILE_SITE_KEY = window.SADA_CONFIG.TURNSTILE_SITE_KEY;
+    let captchaRequired = true; // Supabase يتحقق من الكابتشا بكل عملية تسجيل
+    let captchaWidgetId = null;
+    let captchaToken = '';
+
+    function showCaptchaWidget() {
+      const box = document.getElementById('turnstileContainer');
+      box.classList.add('show');
+      captchaToken = '';
+
+      const tryRender = () => {
+        if (!window.turnstile) { setTimeout(tryRender, 200); return; } // السكربت لسا يحمّل
+        if (captchaWidgetId === null) {
+          captchaWidgetId = window.turnstile.render('#turnstileContainer', {
+            sitekey: TURNSTILE_SITE_KEY,
+            theme: 'auto',
+            size: 'flexible',
+            language: 'auto',
+            callback: (token) => { captchaToken = token; },
+            'expired-callback': () => { captchaToken = ''; },
+            'error-callback': () => { captchaToken = ''; }
+          });
+        } else {
+          window.turnstile.reset(captchaWidgetId); // يولّد رمز جديد لمحاولة جديدة
+        }
+      };
+      tryRender();
+    }
+
+    const form = document.getElementById('signupForm');
+    const msg = document.getElementById('formMsg');
+    const submitBtn = document.getElementById('submitBtn');
+    const submitLabel = document.getElementById('submitLabel');
+    const submitSpinner = document.getElementById('submitSpinner');
+    const submitCheck = document.getElementById('submitCheck');
+
+    // ===== منتقي تاريخ الميلاد (Wheel Picker) بدل input[type=date] =====
+    (function initBirthdatePicker() {
+      const trigger = document.getElementById('birthdateTrigger');
+      const displayEl = document.getElementById('birthdateDisplay');
+      const hidden = document.getElementById('birthdate');
+      const overlay = document.getElementById('bdModalOverlay');
+      const cancelBtn = document.getElementById('bdCancelBtn');
+      const doneBtn = document.getElementById('bdDoneBtn');
+      const dayCol = document.getElementById('bdWheelDay');
+      const monthCol = document.getElementById('bdWheelMonth');
+      const yearCol = document.getElementById('bdWheelYear');
+
+      const ITEM_H = 40;
+      const MONTHS_AR = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+      const MONTHS_EN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      const isEn = () => document.documentElement.lang === 'en';
+
+      const CURRENT_YEAR = new Date().getFullYear();
+      // نفس حد العمر المطبّق بالتحقق (13-100 سنة) — راجع register.php
+      const MIN_YEAR = CURRENT_YEAR - 100;
+      const MAX_YEAR = CURRENT_YEAR - 13;
+
+      let committed = null; // { day, month, year } آخر قيمة مؤكدة بزر "تم"
+      let pending = { day: 1, month: 1, year: MAX_YEAR - 20 }; // القيمة أثناء التمرير قبل التأكيد
+
+      // صوت "طقة" عند مرور كل رقم بالعجلة (مولّد بالكود، بدون ملف صوت خارجي)
+      let audioCtx = null;
+      let suppressTick = false; // يمنع الصوت وقت وضع العجلات في مكانها برمجيًا (فتح النافذة)
+      function ensureAudioUnlocked() {
+        try {
+          if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+        } catch (e) { /* الصوت غير مدعوم — تجاهل بصمت */ }
+      }
+      function playTick() {
+        try {
+          ensureAudioUnlocked();
+          if (!audioCtx) return;
+          const now = audioCtx.currentTime;
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(1400, now);
+          gain.gain.setValueAtTime(0.28, now);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.045);
+          osc.connect(gain).connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.05);
+        } catch (e) { /* الصوت غير مدعوم — تجاهل بصمت */ }
+      }
+
+      function pad(n) { return String(n).padStart(2, '0'); }
+      function daysInMonth(month, year) { return new Date(year, month, 0).getDate(); }
+
+      function buildColumn(col, values, formatLabel) {
+        col.innerHTML = '';
+        const frag = document.createDocumentFragment();
+        values.forEach(v => {
+          const item = document.createElement('div');
+          item.className = 'bd-wheel-item';
+          item.textContent = formatLabel(v);
+          item.dataset.value = String(v);
+          item.addEventListener('click', () => scrollColToValue(col, v, true));
+          frag.appendChild(item);
+        });
+        col.appendChild(frag);
+      }
+
+      function scrollColToIndex(col, index, smooth) {
+        col.scrollTo({ top: index * ITEM_H, behavior: smooth ? 'smooth' : 'auto' });
+      }
+      function scrollColToValue(col, value, smooth) {
+        const items = col.querySelectorAll('.bd-wheel-item');
+        const idx = Array.prototype.findIndex.call(items, it => it.dataset.value === String(value));
+        if (idx >= 0) scrollColToIndex(col, idx, smooth);
+      }
+      function centerIndex(col) {
+        const items = col.querySelectorAll('.bd-wheel-item');
+        const idx = Math.round(col.scrollTop / ITEM_H);
+        return Math.min(Math.max(idx, 0), items.length - 1);
+      }
+      function centerValue(col) {
+        const items = col.querySelectorAll('.bd-wheel-item');
+        const it = items[centerIndex(col)];
+        return it ? it.dataset.value : null;
+      }
+      function updateSelectedClasses(col) {
+        const idx = centerIndex(col);
+        col.querySelectorAll('.bd-wheel-item').forEach((it, i) => it.classList.toggle('selected', i === idx));
+        const prevIdx = col.dataset.lastIdx;
+        if (!suppressTick && prevIdx !== undefined && Number(prevIdx) !== idx) {
+          playTick();
+        }
+        col.dataset.lastIdx = String(idx);
+      }
+
+      function refreshDayColumn() {
+        const max = daysInMonth(pending.month, pending.year);
+        const clampedDay = Math.min(pending.day || 1, max);
+        buildColumn(dayCol, Array.from({ length: max }, (_, i) => i + 1), String);
+        scrollColToValue(dayCol, clampedDay, false);
+        pending.day = clampedDay;
+        updateSelectedClasses(dayCol);
+      }
+
+      function populateAll() {
+        const monthNames = isEn() ? MONTHS_EN : MONTHS_AR;
+        refreshDayColumn();
+        buildColumn(monthCol, Array.from({ length: 12 }, (_, i) => i + 1), v => monthNames[v - 1]);
+        const years = []; for (let y = MIN_YEAR; y <= MAX_YEAR; y++) years.push(y);
+        buildColumn(yearCol, years, String);
+      }
+
+      function attachWheel(col, onSettle) {
+        let debounceTimer = null;
+        col.addEventListener('scroll', () => {
+          updateSelectedClasses(col);
+          clearTimeout(debounceTimer);
+          debounceTimer = setTimeout(() => {
+            const idx = centerIndex(col);
+            scrollColToIndex(col, idx, true); // تصحيح محاذاة دقيق بعد ما يهدأ التمرير
+            updateSelectedClasses(col);
+            onSettle();
+          }, 130);
+        }, { passive: true });
+      }
+
+      attachWheel(dayCol, () => { pending.day = parseInt(centerValue(dayCol), 10) || pending.day; });
+      attachWheel(monthCol, () => { pending.month = parseInt(centerValue(monthCol), 10) || pending.month; refreshDayColumn(); });
+      attachWheel(yearCol, () => { pending.year = parseInt(centerValue(yearCol), 10) || pending.year; refreshDayColumn(); });
+
+      function positionColumnsInstantly() {
+        scrollColToValue(dayCol, pending.day, false);
+        scrollColToValue(monthCol, pending.month, false);
+        scrollColToValue(yearCol, pending.year, false);
+        updateSelectedClasses(dayCol);
+        updateSelectedClasses(monthCol);
+        updateSelectedClasses(yearCol);
+      }
+
+      let scrollLockY = 0;
+
+      function openModal() {
+        pending = committed ? { ...committed } : { day: 1, month: 1, year: MAX_YEAR - 20 };
+        suppressTick = true;
+        populateAll();
+        overlay.classList.add('show');
+        trigger.setAttribute('aria-expanded', 'true');
+        // قفل تمرير الخلفية بثبات الصفحة مكانها (يمنع اختلاف موضع الشاشة المرئية
+        // عن التخطيط على آيفون/أندرويد لما يظهر أو يختفي شريط المتصفح)
+        scrollLockY = window.scrollY || window.pageYOffset || 0;
+        document.body.style.position = 'fixed';
+        document.body.style.top = -scrollLockY + 'px';
+        document.body.style.left = '0';
+        document.body.style.right = '0';
+        document.body.style.overflow = 'hidden';
+        // نتأكد إن التخطيط جاهز قبل ما نحدد موضع التمرير الابتدائي بدون أنيميشن
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          positionColumnsInstantly();
+          setTimeout(() => { suppressTick = false; }, 50);
+        }));
+      }
+
+      function closeModal() {
+        overlay.classList.remove('show');
+        trigger.setAttribute('aria-expanded', 'false');
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.left = '';
+        document.body.style.right = '';
+        document.body.style.overflow = '';
+        window.scrollTo(0, scrollLockY);
+      }
+
+      // يعيد ضبط ارتفاع النافذة إذا تغيّر حجم الشاشة المرئية أثناء الفتح
+      // (مثلاً اختفاء/ظهور شريط عنوان المتصفح على الهاتف)
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', () => {
+          if (overlay.classList.contains('show')) {
+            overlay.style.height = window.visualViewport.height + 'px';
+          }
+        });
+        overlay.addEventListener('transitionend', () => {
+          if (!overlay.classList.contains('show')) overlay.style.height = '';
+        });
+      }
+
+      function commitSelection() {
+        committed = { ...pending };
+        hidden.value = committed.year + '-' + pad(committed.month) + '-' + pad(committed.day);
+        displayEl.removeAttribute('data-i18n');
+        displayEl.textContent = pad(committed.day) + ' / ' + pad(committed.month) + ' / ' + committed.year;
+        trigger.classList.add('has-value');
+        hidden.dispatchEvent(new Event('input')); // يشغّل منطق مسح خطأ الحقل الموجود أصلًا
+        closeModal();
+      }
+
+      trigger.addEventListener('click', () => { ensureAudioUnlocked(); openModal(); });
+      cancelBtn.addEventListener('click', closeModal);
+      doneBtn.addEventListener('click', commitSelection);
+      overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay.classList.contains('show')) closeModal(); });
+
+      // لو تغيّرت اللغة والنافذة مفتوحة، نعيد بناء أسماء الأشهر بدون ما نفقد
+      // مكان صاحب التمرير الحالي
+      document.addEventListener('sada:langchange', () => {
+        if (!overlay.classList.contains('show')) return;
+        populateAll();
+        requestAnimationFrame(() => requestAnimationFrame(positionColumnsInstantly));
+      });
+    })();
+
+    const fields = ['name', 'email', 'password', 'confirm', 'birthdate'].map(id => document.getElementById(id));
+    const shells = {};
+    fields.forEach(el => {
+      const shell = el.closest('.input-shell');
+      shells[el.id] = shell;
+      el.addEventListener('input', () => shell.classList.remove('field-error'));
+    });
+    showCaptchaWidget();
+
+    function isValidEmail(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+
+    // إزالة المسافات وتوحيد حالة أحرف اسم النطاق (بعد @) لأحرف صغيرة —
+    // نفس منطق normalize_email() في config.php بالضبط.
+    function normalizeEmail(v){
+      v = (v || '').trim();
+      const at = v.lastIndexOf('@');
+      if (at === -1) return v;
+      return v.slice(0, at) + '@' + v.slice(at + 1).toLowerCase();
+    }
+
+    // ===== اقتراح تصحيح خطأ إملائي شائع باسم النطاق (Domain typo) =====
+    // خريطة صريحة لأخطاء معروفة — أضف سطر جديد هنا بسهولة لتوسعتها مستقبلًا
+    const KNOWN_DOMAIN_TYPOS = {
+      'gmial.com': 'gmail.com', 'gmail.con': 'gmail.com', 'gmai.com': 'gmail.com',
+      'gmal.com': 'gmail.com', 'gmail.cm': 'gmail.com', 'gnail.com': 'gmail.com',
+      'hotnail.com': 'hotmail.com', 'hotmial.com': 'hotmail.com', 'hotmail.con': 'hotmail.com',
+      'hotmail.cm': 'hotmail.com',
+      'outlok.com': 'outlook.com', 'outlool.com': 'outlook.com', 'outlook.con': 'outlook.com',
+      'yaho.com': 'yahoo.com', 'yahoo.con': 'yahoo.com', 'yahoo.cm': 'yahoo.com',
+    };
+    // نطاقات شائعة تُستخدم كمرجع لمطابقة تقريبية (مسافة تحرير Levenshtein)
+    // لأي خطأ غير مدرج صراحة أعلاه — أضف نطاقًا هنا ليدخل ضمن الفحص التلقائي
+    const COMMON_EMAIL_DOMAINS = [
+      'gmail.com', 'hotmail.com', 'outlook.com', 'yahoo.com', 'icloud.com',
+      'live.com', 'msn.com', 'aol.com', 'protonmail.com'
+    ];
+
+    function levenshteinDistance(a, b){
+      const m = a.length, n = b.length;
+      const dp = [];
+      for (let i = 0; i <= m; i++){ dp.push([i]); }
+      for (let j = 1; j <= n; j++){ dp[0][j] = j; }
+      for (let i = 1; i <= m; i++){
+        for (let j = 1; j <= n; j++){
+          dp[i][j] = a[i - 1] === b[j - 1]
+            ? dp[i - 1][j - 1]
+            : 1 + Math.min(dp[i - 1][j - 1], dp[i - 1][j], dp[i][j - 1]);
+        }
+      }
+      return dp[m][n];
+    }
+
+    // يرجّع اسم نطاق مقترح للتصحيح أو null لو ما فيه اقتراح مناسب. أبدًا
+    // ما يعدّل قيمة حقل البريد بنفسه — فقط يقترح، والمستخدم هو من يقرر.
+    function suggestEmailDomain(email){
+      const at = email.lastIndexOf('@');
+      if (at === -1) return null;
+      const domain = email.slice(at + 1).toLowerCase();
+      if (!domain) return null;
+      if (KNOWN_DOMAIN_TYPOS[domain]) return KNOWN_DOMAIN_TYPOS[domain];
+      if (COMMON_EMAIL_DOMAINS.includes(domain)) return null;
+      let best = null, bestDist = 3; // نقبل فرق حرف أو حرفين بس، عشان ما نقترح نطاقات مختلفة فعليًا عن قصد
+      for (const candidate of COMMON_EMAIL_DOMAINS){
+        const d = levenshteinDistance(domain, candidate);
+        if (d > 0 && d <= 2 && d < bestDist){ best = candidate; bestDist = d; }
+      }
+      return best;
+    }
+
+    // مؤشر قوة كلمة المرور: يحسب النقاط من الطول وتنوع الأحرف، ويحدد مستوى من 3
+    const pwEl = document.getElementById('password');
+    const pwStrengthWrap = document.getElementById('pwStrength');
+    const pwStrengthBar = document.getElementById('pwStrengthBar');
+    const pwStrengthLabel = document.getElementById('pwStrengthLabel');
+
+    function passwordStrengthLevel(pw){
+      if (!pw) return null;
+      let points = 0;
+      if (pw.length >= 8) points++;
+      if (pw.length >= 12) points++;
+      if (/[a-z]/.test(pw) && /[A-Z]/.test(pw)) points++;
+      if (/[0-9]/.test(pw)) points++;
+      if (/[^A-Za-z0-9]/.test(pw)) points++;
+      if (pw.length < 8) return { level: 'weak', percent: 15 };
+      if (points <= 1) return { level: 'weak', percent: 33 };
+      if (points <= 3) return { level: 'good', percent: 66 };
+      return { level: 'strong', percent: 100 };
+    }
+
+    function renderPwStrength(){
+      const result = passwordStrengthLevel(pwEl.value);
+      if (!result){
+        pwStrengthWrap.classList.remove('show');
+        return;
+      }
+      pwStrengthWrap.classList.add('show');
+      pwStrengthWrap.setAttribute('data-level', result.level);
+      pwStrengthBar.style.width = result.percent + '%';
+      const key = result.level === 'weak' ? 'pwStrengthWeak' : result.level === 'good' ? 'pwStrengthGood' : 'pwStrengthStrong';
+      pwStrengthLabel.textContent = SadaI18n.t(key);
+    }
+    pwEl.addEventListener('input', renderPwStrength);
+    document.addEventListener('sada:langchange', renderPwStrength);
+
+    let lastErrorVibrateAt = 0;
+    function vibrateOnError(){
+      const now = Date.now();
+      if (now - lastErrorVibrateAt < 1500) return; // تجاهل الأخطاء المتكررة بسرعة عشان ما يصير اهتزاز مزعج متواصل
+      lastErrorVibrateAt = now;
+      // اهتزاز حقيقي (يشتغل على أندرويد فقط — آيفون Safari ما يدعم اهتزاز المتصفح إطلاقًا،
+      // هذي قيود من آبل نفسها مو خلل بالكود)
+      if ('vibrate' in navigator) { try { navigator.vibrate(200); } catch (e) {} }
+      // اهتزاز بصري (رجّة خفيفة) كبديل يشتغل على كل الأجهزة بما فيها آيفون
+      msg.classList.remove('shake'); void msg.offsetWidth; msg.classList.add('shake');
+    }
+    function showMsg(text, type){ msg.textContent = text; msg.className = 'form-msg show ' + type; if (type === 'error') vibrateOnError(); }
+    function clearFieldErrors(){ fields.forEach(el => shells[el.id].classList.remove('field-error')); }
+    function markFieldError(id){ shells[id].classList.add('field-error'); document.getElementById(id === 'birthdate' ? 'birthdateTrigger' : id).focus(); }
+
+    // ===== ربط عناصر اقتراح تصحيح البريد بالواجهة =====
+    const emailInput = document.getElementById('email');
+    const emailSuggestBox = document.getElementById('emailSuggest');
+    const emailSuggestText = document.getElementById('emailSuggestText');
+    const emailSuggestAccept = document.getElementById('emailSuggestAccept');
+    const emailSuggestDismiss = document.getElementById('emailSuggestDismiss');
+    // آخر بريد أكّد المستخدم إرساله فعلًا (بعد تصحيحه أو تجاهل الاقتراح) —
+    // طالما ما تغيّر البريد عن هذي القيمة، ما نعيد عرض نفس الاقتراح مرة ثانية.
+    let confirmedEmail = null;
+
+    function hideEmailSuggest(){ emailSuggestBox.classList.remove('show'); }
+    function showEmailSuggest(suggestedDomain, currentEmail){
+      const at = currentEmail.lastIndexOf('@');
+      const suggestedEmail = currentEmail.slice(0, at + 1) + suggestedDomain;
+      emailSuggestText.textContent = SadaI18n.t('emailSuggestPrefix') + ' ' + suggestedEmail + '؟';
+      emailSuggestAccept.textContent = SadaI18n.t('emailSuggestUse');
+      emailSuggestDismiss.textContent = SadaI18n.t('emailSuggestKeep');
+      emailSuggestAccept.onclick = () => {
+        emailInput.value = suggestedEmail;
+        confirmedEmail = suggestedEmail;
+        hideEmailSuggest();
+        form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event('submit', { cancelable: true }));
+      };
+      emailSuggestDismiss.onclick = () => {
+        confirmedEmail = currentEmail; // المستخدم اختار إرساله كما هو، ما نزعجه بنفس الاقتراح ثانية
+        hideEmailSuggest();
+        form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event('submit', { cancelable: true }));
+      };
+      emailSuggestBox.classList.add('show');
+    }
+    // أي تعديل يدوي على البريد يلغي التأكيد السابق — لازم نعيد فحصه من جديد
+    emailInput.addEventListener('input', () => { hideEmailSuggest(); confirmedEmail = null; });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      msg.className = 'form-msg';
+      clearFieldErrors();
+      const name = document.getElementById('name').value.trim();
+      let email = normalizeEmail(document.getElementById('email').value);
+      const password = document.getElementById('password').value;
+      const confirm = document.getElementById('confirm').value;
+
+      if (!name) { showMsg(SadaI18n.t('errEnterName'), 'error'); markFieldError('name'); return; }
+      if (!email) { showMsg(SadaI18n.t('errEnterEmail'), 'error'); markFieldError('email'); return; }
+      if (!isValidEmail(email)) { showMsg(SadaI18n.t('errValidEmail'), 'error'); markFieldError('email'); return; }
+
+      // لو فيه اقتراح تصحيح لنفس البريد الحالي وما تأكّد المستخدم منه بعد،
+      // نوقف الإرسال ونعرض الاقتراح — ما نرسل كود تفعيل حتى يؤكد أو يصحح.
+      if (email !== confirmedEmail) {
+        const suggestedDomain = suggestEmailDomain(email);
+        if (suggestedDomain) { showEmailSuggest(suggestedDomain, email); return; }
+      }
+      hideEmailSuggest();
+
+      if (!password) { showMsg(SadaI18n.t('errEnterPassword'), 'error'); markFieldError('password'); return; }
+      if (password.length < 8) { showMsg(SadaI18n.t('errPasswordMin8'), 'error'); markFieldError('password'); return; }
+      if (!confirm) { showMsg(SadaI18n.t('errEnterConfirmPassword'), 'error'); markFieldError('confirm'); return; }
+      if (password !== confirm) { showMsg(SadaI18n.t('errPasswordMismatch'), 'error'); markFieldError('confirm'); return; }
+
+      const birthdate = document.getElementById('birthdate').value;
+      if (!birthdate) { showMsg(SadaI18n.t('errEnterBirthdate'), 'error'); markFieldError('birthdate'); return; }
+      const birthdateObj = new Date(birthdate + 'T00:00:00');
+      const todayObj = new Date(); todayObj.setHours(0,0,0,0);
+      if (isNaN(birthdateObj.getTime()) || birthdateObj > todayObj) {
+        showMsg(SadaI18n.t('errInvalidBirthdate'), 'error'); markFieldError('birthdate'); return;
+      }
+      let age = todayObj.getFullYear() - birthdateObj.getFullYear();
+      const notYetHadBirthdayThisYear = (todayObj.getMonth() < birthdateObj.getMonth())
+        || (todayObj.getMonth() === birthdateObj.getMonth() && todayObj.getDate() < birthdateObj.getDate());
+      if (notYetHadBirthdayThisYear) age--;
+      if (age < 13) { showMsg(SadaI18n.t('errAgeTooYoung'), 'error'); markFieldError('birthdate'); return; }
+
+      if (captchaRequired && !captchaToken) {
+        showMsg(SadaI18n.t('captchaFailed') || 'يرجى تأكيد أنك لست روبوت.', 'error');
+        showCaptchaWidget();
+        return;
+      }
+
+      submitBtn.disabled = true; submitLabel.textContent = SadaI18n.t('signupLoading'); submitSpinner.classList.add('show');
+
+      try {
+        const { data, error } = await SadaAuth.client.auth.signUp({
+          email, password,
+          options: {
+            data: { name, birthdate },
+            captchaToken
+          }
+        });
+
+        if (!error && data.user) {
+          showMsg(SadaI18n.t('signupSuccessMsg') || 'تم إنشاء الحساب! تحقق من بريدك.', 'success');
+          if (window.SadaStepper) window.SadaStepper.advanceTo(2);
+          submitSpinner.classList.remove('show');
+          submitBtn.classList.add('is-success');
+          submitCheck.classList.add('show');
+          submitLabel.textContent = SadaI18n.t('signupSent');
+          sessionStorage.setItem('sada_pending_email', email);
+          setTimeout(() => { window.location.href = '/verify/'; }, 1400);
+        } else {
+          Object.values(shells).forEach(shell => shell.classList.add('field-error'));
+          const already = error && /registered|exists/i.test(error.message || '');
+          showMsg(already ? (SadaI18n.t('emailAlreadyRegistered') || 'هذا البريد مسجّل من قبل.') : (error && error.message) || SadaI18n.t('registerError'), 'error');
+          submitBtn.disabled = false; submitLabel.textContent = SadaI18n.t('signupBtn'); submitSpinner.classList.remove('show');
+          if (window.turnstile && captchaWidgetId !== null) { window.turnstile.reset(captchaWidgetId); captchaToken = ''; }
+        }
+      } catch (err) {
+        showMsg(SadaI18n.t('networkError'), 'error');
+        submitBtn.disabled = false; submitLabel.textContent = SadaI18n.t('signupBtn'); submitSpinner.classList.remove('show');
+      }
+    });
+  </script>
+    <script src="/assets/i18n.js?v=20260801i"></script>
+  <script src="/assets/stepper.js?v=20260801i"></script>
+  <script src="/assets/transitions.js?v=20260801i"></script>
+</body>
+</html>
