@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="preload" as="image" href="/assets/logo-black.png" fetchpriority="high">
+<meta name="theme-color" content="#0f0f0f">
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+<title data-i18n="chooseUsernamePageTitle">اختر اسم المستخدم — صدى</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0f0f0f; --ink-soft:#65676b; --ink-faint:#8a8d91; --line:#dbdbdb;
+  --bg:#fafafa; --panel:#ffffff; --accent:#1a73e8; --danger:#d93025; --success:#1e7a45;
+  --input-bg:#fafafa;
+  --btn-text:#ffffff;
+  --btn-bg:var(--ink);
+  --focus-border:var(--ink);
+  --msg-error-bg:#fdecea;
+  --msg-success-bg:#e9f7ef;
+  --card-shadow:none;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --ink:#f2f2f3; --ink-soft:#a9abaf; --ink-faint:#797c81; --line:#2a2b30;
+    --bg:#0a0a0c; --panel:#17181c; --accent:#6ea8f5; --danger:#f28b82; --success:#81c995;
+    --input-bg:#101114;
+    --btn-text:#ffffff;
+    --btn-bg:linear-gradient(135deg,#6ea8f5,#4b7fd1);
+    --focus-border:#6ea8f5;
+    --msg-error-bg:rgba(242,139,130,.14);
+    --msg-success-bg:rgba(129,201,149,.14);
+    --card-shadow:0 12px 34px rgba(0,0,0,.55);
+  }
+}
+*{box-sizing:border-box;} html,body{height:100%;margin:0;}
+body{ font-family:"IBM Plex Sans Arabic","Segoe UI",Tahoma,sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; display:flex; flex-direction:column; }
+a{color:var(--accent);text-decoration:none;} a:hover{text-decoration:underline;} button{font-family:inherit;}
+.topbar{ padding:22px 24px; display:flex; align-items:center; justify-content:space-between; }
+.topbar-spacer{ width:76px; }
+.lang-switch{
+  display:flex; align-items:center; gap:6px; border:1px solid var(--line); background:transparent;
+  color:var(--ink-soft); border-radius:20px; padding:7px 14px; font-size:13px; font-weight:600;
+  cursor:pointer; font-family:inherit; transition:border-color .15s ease, color .15s ease;
+}
+.lang-switch:hover{ border-color:var(--ink-faint); color:var(--ink); }
+.lang-switch svg{ width:15px; height:15px; }
+.logo{ display:flex; align-items:center; gap:10px; font-weight:700; font-size:19px; color:var(--ink); }
+.logo-mark{ height:29px; width:auto; display:block; flex-shrink:0; }
+.wrap{ flex:1; display:flex; align-items:center; justify-content:center; padding:16px 16px 60px; }
+.card{ width:100%; max-width:380px; background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:36px 32px; box-shadow:var(--card-shadow); }
+.stack{ display:flex; flex-direction:column; align-items:center; }
+@media (max-width:480px){ .card{ border:none; padding:20px 6px; } }
+.card h1{ font-size:20px; font-weight:700; margin:0 0 6px; text-align:center; }
+.card .sub{ font-size:13.5px; color:var(--ink-soft); text-align:center; margin:0 0 26px; }
+.field{ margin-bottom:6px; }
+.field label{ display:block; font-size:13px; font-weight:500; color:var(--ink); margin-bottom:6px; }
+.field .input-shell{ border:1px solid var(--line); border-radius:8px; background:var(--input-bg); transition:border-color .15s ease, background .15s ease; position:relative; }
+.field .input-shell:focus-within{ border-color:var(--focus-border); background:var(--panel); }
+.field .input-shell.field-error{ border-color:var(--danger); }
+.field .input-shell.field-ok{ border-color:var(--success); }
+.field input{ width:100%; border:none; outline:none; background:transparent; padding:12px 14px; font-size:14.5px; font-family:inherit; color:var(--ink); border-radius:8px; }
+html[dir="rtl"] .field input{ padding-left:70px; }
+html[dir="ltr"] .field input{ padding-right:70px; }
+.at-prefix{ position:absolute; top:50%; transform:translateY(-50%); color:var(--ink-faint); font-size:14.5px; pointer-events:none; }
+html[dir="rtl"] .at-prefix{ right:14px; }
+html[dir="ltr"] .at-prefix{ left:14px; }
+html[dir="rtl"] #username{ padding-right:26px; }
+html[dir="ltr"] #username{ padding-left:26px; }
+.check-status{ position:absolute; top:50%; transform:translateY(-50%); font-size:12px; font-weight:700; }
+html[dir="rtl"] .check-status{ left:10px; }
+html[dir="ltr"] .check-status{ right:10px; }
+.check-status.ok{ color:var(--success); }
+.check-status.taken{ color:var(--danger); }
+.field.floating .input-shell label{ inset-inline-start:27px; }
+.hint{ font-size:12px; color:var(--ink-faint); margin:8px 0 14px; }
+.btn-primary{ width:100%; border:none; border-radius:8px; padding:12.5px; font-weight:700; font-size:14.5px; color:var(--btn-text); background:var(--btn-bg); cursor:pointer; transition:opacity .15s ease; margin-top:6px; }
+.btn-primary:hover{ opacity:.88; } .btn-primary[disabled]{ opacity:.5; cursor:default; }
+.btn-primary{ display:flex; align-items:center; justify-content:center; gap:8px; }
+.spinner{
+  display:none; width:15px; height:15px; border-radius:50%;
+  border:2px solid color-mix(in srgb, var(--btn-text) 35%, transparent); border-top-color:var(--btn-text);
+  animation:spin .7s linear infinite;
+}
+.spinner.show{ display:inline-block; }
+@keyframes spin{ to{ transform:rotate(360deg); } }
+.form-msg{ display:none; font-size:13px; padding:10px 12px; border-radius:8px; margin-bottom:16px; text-align:center; }
+.form-msg.shake{ animation:sada-shake .35s ease; }
+@keyframes sada-shake{
+  10%,90%{ transform:translateX(-1px); }
+  20%,80%{ transform:translateX(2px); }
+  30%,50%,70%{ transform:translateX(-4px); }
+  40%,60%{ transform:translateX(4px); }
+}
+.form-msg.show{ display:block; } .form-msg.error{ background:var(--msg-error-bg); color:var(--danger); } .form-msg.success{ background:var(--msg-success-bg); color:var(--success); }
+footer{ text-align:center; padding:18px; font-size:12px; color:var(--ink-faint); }
+</style>
+<link rel="stylesheet" href="/assets/transitions.css?v=20260801i">
+<link rel="stylesheet" href="/assets/form-controls.css?v=20260801i">
+<noscript><style>body.sada-pre{opacity:1 !important;}</style></noscript>
+<link rel="stylesheet" href="/assets/stepper.css?v=20260801i">
+</head>
+<body>
+<script>document.body.classList.add('sada-pre');</script>
+  <div class="topbar">
+    <button class="topbar-back" id="backBtn" type="button" aria-label="رجوع" data-i18n-aria="backBtnLabel">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <a href="/" class="logo">
+      <span data-i18n="brand">صدى</span>
+      <img src="/assets/logo-black.png" alt="" class="logo-mark" width="30" height="29" loading="eager" fetchpriority="high" decoding="async">
+    </a>
+    <button class="lang-switch" id="langBtn" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 6 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-6-3.8-9s1.3-6.3 3.8-9z"/></svg>
+      <span id="langBtnLabel">EN</span>
+    </button>
+  </div>
+
+  <div class="wrap">
+    <div class="stack">
+      <div class="sada-stepper-panel">
+        <div class="sada-stepper" data-current-step="3">
+          <span class="sada-stepper-label" data-step-label="1" data-i18n="stepAccount">الحساب</span>
+          <span class="sada-stepper-label" data-step-label="2" data-i18n="stepVerify">التفعيل</span>
+          <span class="sada-stepper-label" data-step-label="3" data-i18n="stepUsername">اسم المستخدم</span>
+          <span class="sada-stepper-label" data-step-label="4" data-i18n="stepDone">تم</span>
+          <div class="sada-stepper-dots">
+            <span class="sada-dot" data-step="1"></span>
+            <span class="sada-dot" data-step="2"></span>
+            <span class="sada-dot" data-step="3"></span>
+            <span class="sada-dot" data-step="4"></span>
+          </div>
+        </div>
+      </div>
+      <form class="card" id="usernameForm" novalidate>
+        <h1 data-i18n="chooseUsernameTitle">اختر اسم المستخدم</h1>
+        <p class="sub" data-i18n="chooseUsernameSub">هذا هو الاسم اللي بيميّز حسابك في صدى</p>
+
+        <div class="form-msg" id="formMsg"></div>
+
+        <div class="field floating">
+          <div class="input-shell">
+            <span class="at-prefix">@</span>
+            <input id="username" name="username" type="text" autocomplete="off" maxlength="20" placeholder=" ">
+            <label for="username" data-i18n="usernameLabel">اسم المستخدم</label>
+            <span class="check-status" id="checkStatus"></span>
+          </div>
+        </div>
+        <div class="hint" data-i18n="errUsernameFormat">3 إلى 20 حرفًا: أحرف/أرقام/شرطة سفلية فقط</div>
+
+        <button class="btn-primary" type="submit" id="submitBtn"><span class="spinner" id="submitSpinner"></span><span id="submitLabel" data-i18n="chooseUsernameBtn">متابعة</span></button>
+      </form>
+    </div>
+  </div>
+
+  <footer>© صدى — جميع الحقوق محفوظة</footer>
+
+    <script src="/assets/i18n.js?v=20260801i"></script>
+  <script src="/assets/stepper.js?v=20260801i"></script>
+  <script src="/assets/transitions.js?v=20260801i"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="/js/supabase-config.js"></script>
+  <script src="/js/supabase-client.js"></script>
+  <script>
+    window.addEventListener('pageshow', function(e){ if (e.persisted) { window.location.reload(); } });
+
+    const form = document.getElementById('usernameForm');
+    const msg = document.getElementById('formMsg');
+    const submitBtn = document.getElementById('submitBtn');
+    const submitLabel = document.getElementById('submitLabel');
+    const submitSpinner = document.getElementById('submitSpinner');
+    const usernameInput = document.getElementById('username');
+    const usernameShell = usernameInput.closest('.input-shell');
+    const checkStatus = document.getElementById('checkStatus');
+    let currentUser = null;
+
+    // حماية الصفحة: لازم جلسة صالحة، ولو سبق واختار يوزرنيم نوديه للفييد مباشرة
+    (async function guardPage(){
+      const user = await SadaAuth.getUser();
+      if (!user) { window.location.href = '/login/'; return; }
+      currentUser = user;
+      const profile = await SadaAuth.getProfile(user.id);
+      if (profile && profile.username) { window.location.href = '/feed/'; }
+    })();
+
+    let lastErrorVibrateAt = 0;
+    function vibrateOnError(){
+      const now = Date.now();
+      if (now - lastErrorVibrateAt < 1500) return; // تجاهل الأخطاء المتكررة بسرعة عشان ما يصير اهتزاز مزعج متواصل
+      lastErrorVibrateAt = now;
+      if ('vibrate' in navigator) { try { navigator.vibrate(200); } catch (e) {} }
+      msg.classList.remove('shake'); void msg.offsetWidth; msg.classList.add('shake');
+    }
+    function showMsg(text, type){ msg.textContent = text; msg.className = 'form-msg show ' + type; if (type === 'error') vibrateOnError(); }
+    function isValidFormat(v){ return /^[A-Za-z0-9_\u0600-\u06FF]{3,20}$/.test(v); }
+
+    // فحص فوري (مع تأخير بسيط) لتوفّر اسم المستخدم أثناء الكتابة
+    let checkTimer = null;
+    let lastCheckedValue = '';
+    let isAvailable = false;
+
+    usernameInput.addEventListener('input', function(){
+      this.value = this.value.replace(/\s/g, '');
+      usernameShell.classList.remove('field-error', 'field-ok');
+      checkStatus.textContent = '';
+      checkStatus.className = 'check-status';
+      isAvailable = false;
+      clearTimeout(checkTimer);
+      const value = this.value.trim();
+      if (!value || !isValidFormat(value)) return;
+      checkTimer = setTimeout(() => checkAvailability(value), 450);
+    });
+
+    async function checkAvailability(value){
+      try {
+        const { data, error } = await SadaAuth.client
+          .from('profiles')
+          .select('id')
+          .eq('username', value)
+          .maybeSingle();
+        if (usernameInput.value.trim() !== value) return; // المستخدم كمّل يكتب قبل ما يرجع الرد
+        lastCheckedValue = value;
+        const available = !error && !data;
+        isAvailable = available;
+        if (available) {
+          usernameShell.classList.add('field-ok');
+          checkStatus.textContent = SadaI18n.t('usernameAvailableUI');
+          checkStatus.className = 'check-status ok';
+        } else {
+          usernameShell.classList.add('field-error');
+          checkStatus.textContent = SadaI18n.t('usernameTakenUI');
+          checkStatus.className = 'check-status taken';
+        }
+      } catch (err) { /* فشل الفحص الفوري ليس حرجًا — التحقق الحقيقي يصير عند الإرسال */ }
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      msg.className = 'form-msg';
+      const username = usernameInput.value.trim();
+
+      if (!username) { showMsg(SadaI18n.t('errEnterUsername'), 'error'); usernameShell.classList.add('field-error'); usernameInput.focus(); return; }
+      if (!isValidFormat(username)) { showMsg(SadaI18n.t('errUsernameFormat'), 'error'); usernameShell.classList.add('field-error'); usernameInput.focus(); return; }
+
+      submitBtn.disabled = true; submitLabel.textContent = SadaI18n.t('checkingUsername'); submitSpinner.classList.add('show');
+
+      try {
+        const { error } = await SadaAuth.client
+          .from('profiles')
+          .update({ username })
+          .eq('id', currentUser.id);
+
+        if (!error) {
+          showMsg((SadaI18n.t('usernameSetMsg') || 'تم ضبط اسم المستخدم') + SadaI18n.t('redirectingSuffix'), 'success');
+          if (window.SadaStepper) window.SadaStepper.advanceTo(4);
+          setTimeout(() => { window.location.href = '/feed/'; }, 1400);
+        } else {
+          usernameShell.classList.add('field-error');
+          const taken = /duplicate|unique/i.test(error.message || '');
+          showMsg(taken ? (SadaI18n.t('usernameTakenUI') || 'الاسم محجوز.') : error.message, 'error');
+          submitBtn.disabled = false; submitLabel.textContent = SadaI18n.t('chooseUsernameBtn'); submitSpinner.classList.remove('show');
+        }
+      } catch (err) {
+        showMsg(SadaI18n.t('networkError'), 'error');
+        submitBtn.disabled = false; submitLabel.textContent = SadaI18n.t('chooseUsernameBtn'); submitSpinner.classList.remove('show');
+      }
+    });
+  </script>
+</body>
+</html>
